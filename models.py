@@ -125,4 +125,5 @@ class ScriptInfo(db.Model, BaseModel):
     file_id = db.Column(db.String(150), default=0, comment='Remote file_id')
     msg = db.Column(db.String(50), default='', comment='备注')
     other = db.Column(db.String(50), default='', comment='other')
-    default = ['name', 'isTiming', 'id','createTime','msg','userId','other','file_id']
+    isPost = db.Column(db.Integer, default=0, comment='是否post')
+    default = ['name', 'isTiming', 'id','createTime','msg','userId','other','file_id','isPost']

@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, make_response, send_from_directory, request
 
 from services.services_info import CheckServcie, DingServer
 from utils.basecode import BaseView, RespAdapter
@@ -6,6 +6,7 @@ from utils.basecode import BaseView, RespAdapter
 
 class Check(BaseView):
     def post(self):
+        #pre-commit
         data = CheckServcie().testapi()
         res = False
         if data == 1:
@@ -19,6 +20,7 @@ class Check(BaseView):
         elif data == 5:
             res = {"cd":0, "msg": "脚本检验已全部关闭", "data": {"result": []}}
         if res:
+            #执行未出现问题时执行逻辑
             data = RespAdapter.make_resp_for_client(res)
             return data
         data, hid = data
@@ -29,6 +31,7 @@ class Check(BaseView):
 
 class DingDing(BaseView):
     def get(self):
+        #测试消息，忽略
         data = DingServer().testmsg()
         return self.jscode()
 
@@ -38,3 +41,20 @@ class DingDing(BaseView):
 class Index(BaseView):
     def get(self):
         render_template('index.html')
+
+
+class CheckLog(BaseView):
+    def get(self):
+        #查看204服务器时用的接口，可以忽略
+        response = make_response(
+            send_from_directory('./logs', 'uwsgi.log', as_attachment=True))
+        return response
+
+
+class PostCheck(BaseView):
+    def post(self):
+        #后置检查
+        data = CheckServcie().posttapi()
+        return self.jscode()
+if __name__ == '__main__':
+    DingDing().get()

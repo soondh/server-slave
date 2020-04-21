@@ -12,10 +12,11 @@ class Url_register(object):
 
     def url_svn_git(self, api):
         api.add_resource(view_info.Check, self.url + '/check')
+        api.add_resource(view_info.PostCheck, self.url + '/postcheck')
         api.add_resource(view_info.DingDing, self.url + '/dingding')
 
     def url_plug(self, api):
-        pass
+        api.add_resource(view_info.CheckLog, self.url + '/log')
 
     def url_index(self, api):
         api.add_resource(view_user.UserView, self.url + '/user/login')
@@ -24,7 +25,7 @@ class Url_register(object):
         api.add_resource(view_user.ScriptView, self.url + '/project/script', self.url + '/script')
         api.add_resource(view_user.HistoryView, self.url + '/history')
         api.add_resource(view_user.SwtichView, self.url + '/swtich')
-        api.add_resource(view_user.MasterProjectView, self.url + '/master/project')
-        api.add_resource(view_user.MasterHistoryView, self.url + '/master/history')
+        #api.add_resource(view_user.MasterProjectView, self.url + '/master/project')
+        #api.add_resource(view_user.MasterHistoryView, self.url + '/master/history')
 
 

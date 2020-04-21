@@ -50,7 +50,8 @@ class HistoryView(BaseView):
     """
 
     def get(self):
-        data = HistoryService().getdata()
+        hserveice = HistoryService()
+        data = hserveice.getdata()
         if data == 1:
             return self.jscode(code=self.Error_code, msg='参数类型错误')
         elif data == 2:
@@ -60,7 +61,11 @@ class HistoryView(BaseView):
         elif data == 4:
             return self.jscode(msg='该项目无历史记录', data=[])
         else:
-            return self.jscode(data=data)
+            try:
+                total = hserveice.total
+            except:
+                total = 0
+            return self.jscode(data=data, total=total)
 
 
 class ProjectView(BaseView):
@@ -258,7 +263,7 @@ class ScriptView(BaseView):
 
     def get(self):
         data = ScriptService().getscript()
-        if type(data) not in (int,dict):
+        if type(data) not in (int, dict):
             return data
         if data == 1:
             return self.jscode(code=self.Error_code, msg='参数类型错误')
@@ -418,6 +423,7 @@ class SwtichView(BaseView):
             return self.jscode(code=self.Error_code, msg='无此权限')
         else:
             return self.jscode()
+
 
 class MasterProjectView(BaseView):
     def get(self):

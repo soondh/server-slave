@@ -11,7 +11,7 @@ from utils.make_token import Token_info
 class UserService(RequestSelf):
     def login(self):
         QASESSIONID = request.cookies.get('QASESSIONID')
-        try:
+        try:#与账号中心通信
             data = requests.get('http://10.225.136.151:33102/sso/checkLogin?needJsonp=False',
                                 cookies={'QASESSIONID': QASESSIONID})
         except:
@@ -19,7 +19,7 @@ class UserService(RequestSelf):
         judge = data.content.decode()
         judge = json.loads(judge)
         cd = judge.get('cd', False)
-        if cd:
+        if cd:#根据账号中心返回的code进行判断
             return 1
         try:
             name = judge['data']['username']

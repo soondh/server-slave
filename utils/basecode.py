@@ -19,7 +19,7 @@ class BaseView(Resource):
     Error_code = 1
     Right_code = 0
 
-    def jscode(self, code=Right_code, msg='', num=0, data='', datainfo=None):
+    def jscode(self, code=Right_code, msg='', num=0, data='', datainfo=None, total=0):
         if data is '':
             data = {}
         if datainfo:
@@ -28,6 +28,7 @@ class BaseView(Resource):
             data = {'cd': code, 'msg': msg, 'data': data}
         if datainfo:
             data['datainfo'] = datainfo
+        data['total'] = total
         return data
 
     @classmethod
@@ -79,8 +80,11 @@ class RequestSelf(object):
         content = base64.b64decode(content.encode())
         os.makedirs(os.path.dirname(path), exist_ok=True)
         savepath = os.path.join(path)
-        with open(savepath, 'wb') as f:
-            f.write(content)
+        try:
+            with open(savepath, 'wb') as f:
+                f.write(content)
+        except:
+            pass
         return savepath
 
     def create(self, obj):
@@ -90,6 +94,8 @@ class RequestSelf(object):
             db.session.commit()
         except Exception as e:
             print(str(e))
+            with open('./createerror.log', 'w') as f:
+                f.write(str(e))
             db.session.rollback()
 
     def update(self, obj):
@@ -101,6 +107,8 @@ class RequestSelf(object):
                 db.session.commit()
         except Exception as e:
             print(str(e))
+            with open('./updateerror.log', 'w') as f:
+                f.write(str(e))
             db.session.rollback()
 
     def upload(self, path):
@@ -146,6 +154,23 @@ class RequestSelf(object):
                 zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
         zip.close()
 
+    def page(self, page, pageSize, obj):
+        page_max_size = 30
+        if pageSize < page_max_size:
+            page_max_size = pageSize
+        num = len(obj)
+        if num <= page_max_size:
+            if page != 1:
+                return []
+            return obj
+        elif page in [0, 1]:
+            obj = obj[0:page_max_size]
+            return obj
+        elif (num - page_max_size * (page - 1)) <= page_max_size:
+            return obj[(page - 1) * page_max_size:]
+        else:
+            return obj[(page - 1) * page_max_size:page_max_size * page]
+
 
 
 class RespAdapter(object):
@@ -189,7 +214,6 @@ class RespAdapter(object):
                 any_py_error = True
                 temp = '%s %s \n' % (each_py_result['scrname'], each_py_result['syserror'])
                 msg_py_error = msg_py_error + temp
-
         # 在try-catch执行py文件中的每个testfunc函数时，是否捕获到任何异常
         any_py_func_error = False
         msg_py_func_error = ''

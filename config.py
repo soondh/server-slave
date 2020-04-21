@@ -20,7 +20,11 @@ class Config(object):
 
 class DevelopConfig(Config):
     DEBUG = True
+    #SQLALCHEMY_DATABASE_URI = 'mysql://root:123@0.0.0.0:3306/server_local'
+   # SQLALCHEMY_DATABASE_URI = 'mysql://root:123@10.225.136.172:3306/server_new_local'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:123@10.225.136.172:3306/server_product'
+
+
 class LocalConfig(Config):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'mysql://root:123@10.225.136.172:3306/server_product'
